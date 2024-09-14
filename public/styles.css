@@ -1,0 +1,47 @@
+.card-member {
+  background-image: url('/img/card-background.png'); /* Background image for the card */
+  background-size: cover;
+  background-position: center;
+  width: 350px;
+  height: 200px;
+  position: relative;
+  padding: 20px;
+  color: #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.watermark-img {
+  width: 100px; /* Adjust the size of the watermark */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0.1; /* Adjust transparency (0 is fully transparent, 1 is fully opaque) */
+}
+
+.signature {
+  width: 120px; /* Adjust size */
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  opacity: 0.7; /* Adjust transparency */
+}
+
+.stamp {
+  width: 80px; /* Adjust size */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.text-info {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.btn-generate {
+  margin-top: 20px;
+}
