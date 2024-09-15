@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/provinsi', {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE' // Pastikan token ini valid
+          'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE' // Ensure this token is valid
         }
       });
       if (!response.ok) throw new Error(`Error fetching provinsi. Status: ${response.status}`);
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const options = provinsi.map(item => createOption(item.id, item.name));
       provinsiSelect.append(...options);
     } catch (error) {
-      console.error('Error fetching provinsi:', error);
+      console.error('Error fetching provinsi:', error.message);
       alert('Gagal memuat data provinsi. Silakan coba lagi nanti.');
     }
   };
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const options = kabupaten.map(item => createOption(item.id, item.name));
       kabupatenSelect.append(...options);
     } catch (error) {
-      console.error('Error fetching kabupaten:', error);
+      console.error('Error fetching kabupaten:', error.message);
       alert('Gagal memuat data kabupaten. Silakan coba lagi nanti.');
     }
   };
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const options = kecamatan.map(item => createOption(item.id, item.name));
       kecamatanSelect.append(...options);
     } catch (error) {
-      console.error('Error fetching kecamatan:', error);
+      console.error('Error fetching kecamatan:', error.message);
       alert('Gagal memuat data kecamatan. Silakan coba lagi nanti.');
     }
   };
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const options = kelurahan.map(item => createOption(item.id, item.name));
       kelurahanSelect.append(...options);
     } catch (error) {
-      console.error('Error fetching kelurahan:', error);
+      console.error('Error fetching kelurahan:', error.message);
       alert('Gagal memuat data kelurahan. Silakan coba lagi nanti.');
     }
   };
