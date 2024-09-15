@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate provinsi
   const fetchProvinsi = async () => {
     try {
-      const response = await fetch('https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/provinsi', {
+      const response = await fetch('https://backend-one-mu.vercel.app/api/provinsi', {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE' // Ensure this token is valid
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate kabupaten based on selected provinsi
   const fetchKabupaten = async (provinsiId) => {
     try {
-      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kabupaten/${provinsiId}`, {
+      const response = await fetch(`https://backend-one-mu.vercel.app/api/kabupaten/${provinsiId}`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE'
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate kecamatan based on selected kabupaten
   const fetchKecamatan = async (kabupatenId) => {
     try {
-      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kecamatan/${kabupatenId}`);
+      const response = await fetch(`https://backend-one-mu.vercel.app/api/kecamatan/${kabupatenId}`);
       if (!response.ok) throw new Error(`Error fetching kecamatan. Status: ${response.status}`);
       
       let kecamatan = await response.json();
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate kelurahan based on selected kecamatan
   const fetchKelurahan = async (kecamatanId) => {
     try {
-      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kelurahan/${kecamatanId}`);
+      const response = await fetch(`https://backend-one-mu.vercel.app/api/kelurahan/${kecamatanId}`);
       if (!response.ok) throw new Error(`Error fetching kelurahan. Status: ${response.status}`);
       
       const kelurahan = await response.json();
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = Object.fromEntries(formData.entries());
     
     try {
-      const response = await fetch('https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/register', {
+      const response = await fetch('https://backend-one-mu.vercel.app.app/register', {
         method: 'POST',
         body: new URLSearchParams(data),
       });

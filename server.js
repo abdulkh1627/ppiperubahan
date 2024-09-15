@@ -64,7 +64,7 @@ const loadAllData = async () => {
 
 // Configure CORS
 app.use(cors({
-  origin: 'https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app'
+  origin: 'https://backend-one-mu.vercel.app'
 }));
 
 // Serve static files
