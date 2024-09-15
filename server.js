@@ -4,6 +4,12 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const bodyParser = require('body-parser');
 const pool = require('./db'); // Import koneksi database
+const cors = require('cors');
+
+// Konfigurasi CORS
+app.use(cors({
+  origin: 'https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app'
+}));
 
 const app = express();
 const port = 3000;
