@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate provinsi
   const fetchProvinsi = async () => {
     try {
-      const response = await fetch('https://backend-one-mu.vercel.app/api/provinsi');
+      const response = await fetch('/api/provinsi');
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const provinsi = await response.json();
       provinsi.forEach(item => {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate kabupaten based on selected provinsi
   const fetchKabupaten = async (provinsiId) => {
     try {
-      const response = await fetch(`https://backend-one-mu.vercel.app/api/kabupaten/${provinsiId}`);
+      const response = await fetch(`/api/kabupaten/${provinsiId}`);
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const kabupaten = await response.json();
       kabupatenSelect.innerHTML = '<option value="" disabled selected>Pilih Kabupaten</option>'; // Reset kabupaten
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate kecamatan based on selected kabupaten
   const fetchKecamatan = async (kabupatenId) => {
     try {
-      const response = await fetch(`https://backend-one-mu.vercel.app/api/kecamatan/${kabupatenId}`);
+      const response = await fetch(`/api/kecamatan/${kabupatenId}`);
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       let kecamatan = await response.json();
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Fetch and populate kelurahan based on selected kecamatan
   const fetchKelurahan = async (kecamatanId) => {
-    const url = `https://backend-one-mu.vercel.app/api/kelurahan/${kecamatanId}`;
+    const url = `/api/kelurahan/${kecamatanId}`;
     console.log('Fetching URL:', url); // Debugging
 
     try {
