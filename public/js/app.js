@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       let kecamatan = await response.json();
       kecamatan = kecamatan.map(item => ({
-        id: item['﻿id'] || item.id,
+        id: item['id'] || item.id, // Pastikan ini sesuai dengan data yang diterima
         name: item.name,
         kabupaten_id: item.kabupaten_id
       }));
@@ -95,6 +95,15 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error fetching kelurahan:', error.message);
       alert('Gagal memuat data kelurahan.');
     }
+  };
+
+  // Fungsi debounce
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return function(...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
   };
 
   provinsiSelect.addEventListener('change', debounce(async () => {
