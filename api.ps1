@@ -1,7 +1,5 @@
-# Membuat hash table untuk header
-$headers = @{
-    "Authorization" = "Bearer msnmfqvkzNJme2z4EgrAceVE"
-    # Tambahkan header lain jika diperlukan
-}
-# Mengirim permintaan ke API
-Invoke-RestMethod -Uri "https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/provinsi" -Method Get -Headers $headers
+$provinsiId = '11.01.01'
+$url = "https://ppiperubahan.vercel.app/api/kelurahan/$provinsiId"
+
+$response = Invoke-RestMethod -Uri $url
+Write-Host $response
