@@ -16,128 +16,111 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and populate provinsi
   const fetchProvinsi = async () => {
     try {
-      const response = await fetch('/api/provinsi');
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const provinsi = await response.json();
-      provinsi.forEach(item => {
-        provinsiSelect.appendChild(createOption(item.id, item.name));
+      const response = await fetch('https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/provinsi', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE' // Pastikan token ini valid
+        }
       });
+      if (!response.ok) throw new Error(`Error fetching provinsi. Status: ${response.status}`);
+      
+      const provinsi = await response.json();
+      const options = provinsi.map(item => createOption(item.id, item.name));
+      provinsiSelect.append(...options);
     } catch (error) {
       console.error('Error fetching provinsi:', error);
+      alert('Gagal memuat data provinsi. Silakan coba lagi nanti.');
     }
   };
 
   // Fetch and populate kabupaten based on selected provinsi
   const fetchKabupaten = async (provinsiId) => {
     try {
-      const response = await fetch(`/api/kabupaten/${provinsiId}`);
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const kabupaten = await response.json();
-      kabupatenSelect.innerHTML = '<option value="" disabled selected>Pilih Kabupaten</option>'; // Reset kabupaten
-      kabupaten.forEach(item => {
-        kabupatenSelect.appendChild(createOption(item.id, item.name));
+      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kabupaten/${provinsiId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer msnmfqvkzNJme2z4EgrAceVE'
+        }
       });
+      if (!response.ok) throw new Error(`Error fetching kabupaten. Status: ${response.status}`);
+      
+      const kabupaten = await response.json();
+      kabupatenSelect.innerHTML = '<option value="" disabled selected>Pilih Kabupaten</option>';
+      const options = kabupaten.map(item => createOption(item.id, item.name));
+      kabupatenSelect.append(...options);
     } catch (error) {
       console.error('Error fetching kabupaten:', error);
+      alert('Gagal memuat data kabupaten. Silakan coba lagi nanti.');
     }
   };
 
   // Fetch and populate kecamatan based on selected kabupaten
   const fetchKecamatan = async (kabupatenId) => {
     try {
-      const response = await fetch(`/api/kecamatan/${kabupatenId}`);
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kecamatan/${kabupatenId}`);
+      if (!response.ok) throw new Error(`Error fetching kecamatan. Status: ${response.status}`);
+      
       let kecamatan = await response.json();
-
-      // Clean BOM if present
       kecamatan = kecamatan.map(item => ({
-        id: item['﻿id'] || item.id, // Handle BOM in key 'id'
+        id: item['﻿id'] || item.id, // Handle potential BOM in the 'id' field
         name: item.name,
         kabupaten_id: item.kabupaten_id
       }));
-
-      console.log('Filtered kecamatan:', kecamatan); // Debugging
-
-      kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>'; // Reset kecamatan
-      kecamatan.forEach(item => {
-        const option = createOption(item.id, item.name);
-        kecamatanSelect.appendChild(option);
-      });
-
-      if (kecamatan.length === 0) {
-        console.warn('No kecamatan data found for the selected kabupatenId');
-        kecamatanSelect.innerHTML = '<option value="" disabled selected>Kecamatan tidak ditemukan</option>';
-      }
+      
+      kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>';
+      const options = kecamatan.map(item => createOption(item.id, item.name));
+      kecamatanSelect.append(...options);
     } catch (error) {
       console.error('Error fetching kecamatan:', error);
+      alert('Gagal memuat data kecamatan. Silakan coba lagi nanti.');
     }
   };
 
   // Fetch and populate kelurahan based on selected kecamatan
   const fetchKelurahan = async (kecamatanId) => {
-    const url = `/api/kelurahan/${kecamatanId}`;
-    console.log('Fetching URL:', url); // Debugging
-
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
+      const response = await fetch(`https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/api/kelurahan/${kecamatanId}`);
+      if (!response.ok) throw new Error(`Error fetching kelurahan. Status: ${response.status}`);
+      
       const kelurahan = await response.json();
-      console.log('Raw response data:', kelurahan); // Debugging raw response data
-
-      // Ensure the received data is an array
-      if (!Array.isArray(kelurahan)) throw new TypeError('Expected an array but got something else');
-
-      kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>'; // Reset kelurahan
-      kelurahan.forEach(item => {
-        const option = createOption(item.id, item.name);
-        kelurahanSelect.appendChild(option);
-      });
-
-      if (kelurahan.length === 0) {
-        console.warn('No kelurahan data found for the selected kecamatanId');
-        kelurahanSelect.innerHTML = '<option value="" disabled selected>Kelurahan tidak ditemukan</option>';
-      }
+      kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>';
+      const options = kelurahan.map(item => createOption(item.id, item.name));
+      kelurahanSelect.append(...options);
     } catch (error) {
       console.error('Error fetching kelurahan:', error);
+      alert('Gagal memuat data kelurahan. Silakan coba lagi nanti.');
     }
   };
 
-  // Event listener for selecting a provinsi
-  provinsiSelect.addEventListener('change', async () => {
-    const provinsiId = provinsiSelect.value;
-    console.log('Selected provinsiId:', provinsiId); // Debugging
+  // Debounce utility to prevent excessive calls
+  const debounce = (func, wait) => {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  };
 
-    // Reset kabupaten, kecamatan, kelurahan
+  // Event listener for selecting a provinsi
+  provinsiSelect.addEventListener('change', debounce(async () => {
+    const provinsiId = provinsiSelect.value;
     kabupatenSelect.innerHTML = '<option value="" disabled selected>Pilih Kabupaten</option>';
     kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>';
     kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>';
-
-    if (provinsiId) {
-      await fetchKabupaten(provinsiId);
-    }
-  });
+    await fetchKabupaten(provinsiId);
+  }, 300));
 
   // Event listener for selecting a kabupaten
   kabupatenSelect.addEventListener('change', async () => {
     const kabupatenId = kabupatenSelect.value;
-    console.log('Received kabupatenId:', kabupatenId);
-
-    kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>'; // Reset kecamatan
+    kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>';
+    kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>';
     await fetchKecamatan(kabupatenId);
   });
 
   // Event listener for selecting a kecamatan
   kecamatanSelect.addEventListener('change', async () => {
     const kecamatanId = kecamatanSelect.value;
-    console.log('Selected kecamatanId:', kecamatanId); // Debugging
-
-    // Ensure kecamatanId is valid
-    if (!kecamatanId || kecamatanId === "undefined") {
-      console.error('KecamatanId tidak valid atau tidak ditemukan');
-      return;
-    }
-
     kelurahanSelect.innerHTML = '<option value="" disabled selected>Pilih Kelurahan</option>';
     await fetchKelurahan(kecamatanId);
   });
@@ -148,16 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listener for form submission
   registrationForm.addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent default form submission
-
     const formData = new FormData(registrationForm);
     const data = Object.fromEntries(formData.entries());
-
+    
     try {
-      const response = await fetch('/register', {
+      const response = await fetch('https://ppiperubahan-mda9kiz5j-khaliks-projects.vercel.app/register', {
         method: 'POST',
         body: new URLSearchParams(data),
       });
-
       if (response.ok) {
         const result = await response.text();
         await Swal.fire({
@@ -165,9 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: 'Pendaftaran Berhasil',
           text: result,
         });
-        // Reset form after successful submission
         registrationForm.reset();
-        // Optionally clear dropdowns
         provinsiSelect.innerHTML = '<option value="" disabled selected>Pilih Provinsi</option>';
         kabupatenSelect.innerHTML = '<option value="" disabled selected>Pilih Kabupaten</option>';
         kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>';
@@ -184,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await Swal.fire({
         icon: 'error',
         title: 'Terjadi Kesalahan',
-        text: 'Tidak dapat menghubungi server.',
+        text: 'Tidak dapat menghubungi server. Silakan coba lagi nanti.',
       });
     }
   });
