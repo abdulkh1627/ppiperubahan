@@ -1,13 +1,29 @@
-require('dotenv').config();
 const { Pool } = require('pg');
 
-// Konfigurasi koneksi ke PostgreSQL menggunakan URL dari Supabase
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,  // Menggunakan variabel lingkungan untuk URL koneksi
-  ssl: {
-    rejectUnauthorized: false,  // Supabase memerlukan koneksi SSL
-  },
-});
+  
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    // Menambahkan debugging
+    trace: true
+  });
 
-module.exports = pool;
+async function testConnection() {
+  try {
+    console.log('Attempting to connect with:', process.env.DATABASE_URL);
+    const client = await pool.connect();
+    console.log('Connection successful');
+    client.release();
+  } catch (error) {
+    console.error('Error during connection test:', error);
+  }
+}
+
+testConnection();
+
+
+
+
+
+
 

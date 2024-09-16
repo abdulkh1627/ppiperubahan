@@ -1,16 +1,22 @@
-require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const csv = require('csv-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const pool = require('./db'); // Import koneksi database
+const { Pool } = require('pg');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
 
-// Load data from CSV files
+// Database connection
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Load CSV data
 const provinsiData = [];
 const kabupatenData = [];
 const kecamatanData = [];
@@ -37,7 +43,6 @@ const loadCSVData = (filePath, dataArray) => {
         });
 
         console.log('Cleaned row data:', cleanedRow);
-
         dataArray.push(cleanedRow);
       })
       .on('end', () => {
@@ -65,7 +70,7 @@ const loadAllData = async () => {
 
 // Configure CORS
 app.use(cors({
-  origin: 'https://ppiperubahan.vercel.app'
+  origin: 'https://backend-one-mu.vercel.app/'
 }));
 
 // Serve static files
@@ -87,63 +92,32 @@ app.get('/api/kabupaten/:provinsiId', (req, res) => {
 // API to get kecamatan by kabupaten ID
 app.get('/api/kecamatan/:kabupatenId', (req, res) => {
   const kabupatenId = req.params.kabupatenId;
-  console.log('Received kabupatenId:', kabupatenId);
-
-  const cleanData = kecamatanData.map(item => ({
-    id: cleanBOM(item.id),
-    name: cleanBOM(item.name),
-    kabupaten_id: cleanBOM(item.kabupaten_id)
-  }));
-
-  console.log('Cleaned kecamatanData:', cleanData);
-
-  const kecamatan = cleanData.filter(row => row.kabupaten_id === kabupatenId);
-  console.log('Filtered kecamatan:', kecamatan);
-
+  const kecamatan = kecamatanData.filter(row => row.kabupaten_id === kabupatenId);
   res.json(kecamatan);
 });
 
 // API to get kelurahan by kecamatan ID
 app.get('/api/kelurahan/:kecamatanId', (req, res) => {
   const kecamatanId = req.params.kecamatanId;
-  console.log('Received kecamatanId:', kecamatanId);
-
-  const kelurahan = kelurahanData.filter(row => cleanBOM(row.kecamatan_id) === cleanBOM(kecamatanId));
-  console.log('Filtered kelurahan:', kelurahan);
-
+  const kelurahan = kelurahanData.filter(row => row.kecamatan_id === kecamatanId);
   if (kelurahan.length === 0) {
     return res.status(404).json({ error: `No kelurahan found for kecamatan ID ${kecamatanId}` });
   }
-
   res.json(kelurahan);
 });
 
 // Register route
 app.post('/register', async (req, res) => {
-  const { nama, nik, email, nomor_hp, alamat, kabupaten: kabupatenCode, provinsi: provinsiCode, kecamatan: kecamatanCode, kelurahan: kelurahanCode } = req.body;
+  const { nama, nik, email, nomor_hp, alamat, kabupaten, provinsi, kecamatan, kelurahan } = req.body;
 
   console.log('Received registration data:', req.body);
-
-  const provinsi = provinsiData.find(p => p.id === provinsiCode);
-  const provinsiName = provinsi ? provinsi.name : 'Unknown';
-
-  const kabupaten = kabupatenData.find(k => k.id === kabupatenCode);
-  const kabupatenName = kabupaten ? kabupaten.name : 'Unknown';
-
-  const kecamatan = kecamatanData.find(kc => cleanBOM(kc.id) === cleanBOM(kecamatanCode));
-  const kecamatanName = kecamatan ? kecamatan.name : 'Unknown';
-
-  console.log('Found kecamatan:', kecamatanName);
-
-  const kelurahan = kelurahanData.find(kel => cleanBOM(kel.id) === cleanBOM(kelurahanCode));
-  const kelurahanName = kelurahan ? kelurahan.name : 'Unknown';
 
   try {
     const query = `
       INSERT INTO anggota (nama, nik, email, nomor_hp, alamat, kabupaten, provinsi, kecamatan, kelurahan)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     `;
-    const values = [nama, nik, email, nomor_hp, alamat, kabupatenName, provinsiName, kecamatanName, kelurahanName];
+    const values = [nama, nik, email, nomor_hp, alamat, kabupaten, provinsi, kecamatan, kelurahan];
     
     await pool.query(query, values);
     res.send('Pendaftaran berhasil!');
