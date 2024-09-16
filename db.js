@@ -1,12 +1,13 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 
-// Konfigurasi koneksi ke PostgreSQL
+// Konfigurasi koneksi ke PostgreSQL menggunakan URL dari Supabase
 const pool = new Pool({
-  user: 'postgres',       // Ganti dengan username PostgreSQL Anda
-  host: 'localhost',
-  database: 'partai_perubahan',   // Ganti dengan nama database Anda
-  password: 'RezaOktober2023!',   // Ganti dengan password PostgreSQL Anda
-  port: 5432,
+  connectionString: process.env.POSTGRES_URL,  // Menggunakan variabel lingkungan untuk URL koneksi
+  ssl: {
+    rejectUnauthorized: false,  // Supabase memerlukan koneksi SSL
+  },
 });
 
 module.exports = pool;
+
