@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/provinsi');
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
       const provinsi = await response.json();
+      provinsiSelect.innerHTML = '<option value="" disabled selected>Pilih Provinsi</option>'; // Reset dropdown
       provinsi.forEach(item => {
         provinsiSelect.appendChild(createOption(item.id, item.name));
       });
@@ -60,8 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       kecamatanSelect.innerHTML = '<option value="" disabled selected>Pilih Kecamatan</option>'; // Reset kecamatan
       kecamatan.forEach(item => {
-        const option = createOption(item.id, item.name);
-        kecamatanSelect.appendChild(option);
+        kecamatanSelect.appendChild(createOption(item.id, item.name));
       });
 
       if (kecamatan.length === 0) {
@@ -155,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/register', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
         body: new URLSearchParams(data),
       });
 
