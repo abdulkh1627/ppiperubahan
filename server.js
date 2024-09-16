@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
@@ -6,7 +7,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const pool = require('./db'); // Import koneksi database
 
-const app = express(); // Deklarasikan app sebelum menggunakannya
+const app = express();
 const port = 3000;
 
 // Load data from CSV files
@@ -121,7 +122,7 @@ app.get('/api/kelurahan/:kecamatanId', (req, res) => {
 app.post('/register', async (req, res) => {
   const { nama, nik, email, nomor_hp, alamat, kabupaten: kabupatenCode, provinsi: provinsiCode, kecamatan: kecamatanCode, kelurahan: kelurahanCode } = req.body;
 
-  console.log('Received kecamatanCode:', kecamatanCode);
+  console.log('Received registration data:', req.body);
 
   const provinsi = provinsiData.find(p => p.id === provinsiCode);
   const provinsiName = provinsi ? provinsi.name : 'Unknown';
@@ -147,7 +148,7 @@ app.post('/register', async (req, res) => {
     await pool.query(query, values);
     res.send('Pendaftaran berhasil!');
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error during registration:', error);
     res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');
   }
 });
