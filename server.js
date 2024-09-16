@@ -4,9 +4,9 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const pool = require('./db'); // Import koneksi database
+const supabase = require('./db'); // Impor supabase
 
-const app = express(); // Deklarasikan app sebelum menggunakannya
+const app = express();
 const port = 3000;
 
 // Load data from CSV files
@@ -138,14 +138,18 @@ app.post('/register', async (req, res) => {
   const kelurahanName = kelurahan ? kelurahan.name : 'Unknown';
 
   try {
-    const query = `
-      INSERT INTO anggota (nama, nik, email, nomor_hp, alamat, kabupaten, provinsi, kecamatan, kelurahan)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `;
-    const values = [nama, nik, email, nomor_hp, alamat, kabupatenName, provinsiName, kecamatanName, kelurahanName];
-    
-    await pool.query(query, values);
-    res.send('Pendaftaran berhasil!');
+    const { data, error } = await supabase
+      .from('anggota')
+      .insert([
+        { nama, nik, email, nomor_hp, alamat, kabupaten: kabupatenName, provinsi: provinsiName, kecamatan: kecamatanName, kelurahan: kelurahanName }
+      ]);
+
+    if (error) {
+      console.error('Error:', error);
+      res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');
+    } else {
+      res.send('Pendaftaran berhasil!');
+    }
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');
