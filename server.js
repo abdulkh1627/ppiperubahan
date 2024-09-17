@@ -4,7 +4,7 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const supabase = require('./db'); // Impor supabase
+const supabase = require('./db'); // Pastikan ini mengarah ke file db.js yang benar
 
 const app = express();
 const port = 3000;
@@ -64,7 +64,7 @@ const loadAllData = async () => {
 
 // Configure CORS
 app.use(cors({
-  origin: 'https://ppiperubahan.vercel.app'
+  origin: 'https://backend-one-mu.vercel.app/'
 }));
 
 // Serve static files
@@ -140,16 +140,14 @@ app.post('/register', async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('anggota')
-      .insert([
-        { nama, nik, email, nomor_hp, alamat, kabupaten: kabupatenName, provinsi: provinsiName, kecamatan: kecamatanName, kelurahan: kelurahanName }
-      ]);
+      .insert([{ nama, nik, email, nomor_hp, alamat, kabupaten: kabupatenName, provinsi: provinsiName, kecamatan: kecamatanName, kelurahan: kelurahanName }]);
 
     if (error) {
       console.error('Error:', error);
-      res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');
-    } else {
-      res.send('Pendaftaran berhasil!');
+      return res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');
     }
+
+    res.send('Pendaftaran berhasil!');
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Terjadi kesalahan saat mendaftarkan anggota.');

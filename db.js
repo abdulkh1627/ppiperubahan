@@ -25,3 +25,5 @@ async function fetchData() {
 
 // Jalankan fungsi fetchData
 fetchData();
+module.exports = supabase;
+
